@@ -60,9 +60,31 @@ public class TrainService {
         //if the trainId is not passing through that station
         //throw new Exception("Train is not passing from this station");
         //  in a happy case we need to find out the number of such people.
+        Train train = trainRepository.findById(trainId).get();
+        String str = train.getRoute().toString();
+        String[] route = str.substring(1,str.length()-1).split(",");
+        boolean flag =false;
+     for (String s : route){
+         if(s.equals(station.toString())){
+             flag = true;
+         }
+     }
+     if (flag==false){
+         throw new Exception("Train is not passing from this station");
+     }
 
+     List<Ticket> tickets= train.getBookedTickets();
+     List<Passenger> passengers = new ArrayList<>();
+     int count=0;
+        for (Ticket tic: tickets){
+            if(tic.getFromStation().equals(station)){
+                List<Passenger> pass = tic.getPassengersList();
+                String[] st = pass.toString().split(",");
+                count = count+st.length;
+            }
+        }
 
-        return 0;
+        return count;
     }
 
     public Integer calculateOldestPersonTravelling(Integer trainId){
